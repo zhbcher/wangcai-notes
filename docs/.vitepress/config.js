@@ -13,6 +13,7 @@ export default defineConfig({
   title: '旺财笔记',
   description: 'OpenClaw 学习资料库',
   lang: 'zh-CN',
+  outDir: '.vitepress/dist',
   head: [
     ['link', { rel: 'icon', href: '/logo.svg' }]
   ],
