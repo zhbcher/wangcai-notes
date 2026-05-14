@@ -78,6 +78,6 @@ SPM 会自动：
 
 ## 更多资源
 
-- [SPM 完整文档](/skills/SPM/SKILL.md)
+
 - [WBS 任务表示例](/spm/ledger.md)
 - [设计文档模板](/spm/design.md)
