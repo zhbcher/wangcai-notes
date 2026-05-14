@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>旺财笔记管理后台</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+    h1 { color: #f97316; }
+    .login-box { margin: 20px 0; }
+    input, button { padding: 8px; margin-right: 8px; }
+    #login-status { margin-top: 10px; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f5f5f5; }
+    .error { color: #dc2626; }
+    .success { color: #16a34a; }
+  </style>
+</head>
+<body>
+  <h1>旺财笔记管理后台</h1>
+
+  <div class="login-box">
+    <input type="password" id="admin-password" placeholder="管理员密码">
+    <button onclick="login()">登录</button>
+    <p id="login-status"></p>
+  </div>
+
+  <div id="notes-section" style="display:none;">
+    <div style="margin: 20px 0;">
+      <button onclick="loadNotes()">刷新列表</button>
+    </div>
+    <table id="notes-table">
+      <thead>
+        <tr>
+          <th>路径</th>
+          <th>标题</th>
+          <th>状态</th>
+          <th>审核</th>
+          <th>更新时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const API_BASE = 'https://wangcai-admin.zhbcher.workers.dev';
+    const ADMIN_PASSWORD = 'wangcai-admin-2026';
+
+    function login() {
+      const pwd = document.getElementById('admin-password').value;
+      if (pwd === ADMIN_PASSWORD) {
+        localStorage.setItem('admin-auth', 'true');
+        document.getElementById('login-status').textContent = '✅ 已登录';
+        document.getElementById('login-status').className = 'success';
+        loadNotes();
+      } else {
+        document.getElementById('login-status').textContent = '❌ 密码错误';
+        document.getElementById('login-status').className = 'error';
+      }
+    }
+
+    if (localStorage.getItem('admin-auth') === 'true') {
+      document.getElementById('login-status').textContent = '✅ 已登录';
+      document.getElementById('login-status').className = 'success';
+      document.getElementById('notes-section').style.display = 'block';
+      loadNotes();
+    }
+
+    async function loadNotes() {
+      try {
+        const resp = await fetch(`${API_BASE}/api/notes`, {
+          headers: { 'Authorization': 'Bearer ' + ADMIN_PASSWORD }
+        });
+        const data = await resp.json();
+        if (data.success) {
+          renderTable(data.data);
+          document.getElementById('notes-section').style.display = 'block';
+        } else {
+          alert('加载失败: ' + (data.error || '未知错误'));
+        }
+      } catch (err) {
+        alert('请求失败: ' + err.message);
+      }
+    }
+
+    function renderTable(notes) {
+      const tbody = document.querySelector('#notes-table tbody');
+      tbody.innerHTML = notes.map(note => `
+        <tr data-id="${note.id}">
+          <td>${note.path}</td>
+          <td>${note.title}</td>
+          <td>${note.status}</td>
+          <td>${note.review || '-'}</td>
+          <td>${new Date(note.updated_at * 1000).toLocaleString()}</td>
+          <td>
+            <button onclick="updateStatus('${note.id}', 'public')">发布</button>
+            <button onclick="updateStatus('${note.id}', 'private')">内部</button>
+            <button onclick="updateStatus('${note.id}', 'draft')">重编</button>
+            <button onclick="deleteNote('${note.id}')">删除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function updateStatus(id, newStatus) {
+      const review = newStatus === 'draft' ? 'rejected' : 'approved';
+      try {
+        const resp = await fetch(`${API_BASE}/api/notes/${id}/status`, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + ADMIN_PASSWORD,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus, review: review })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          alert('状态已更新为 ' + newStatus);
+          loadNotes();
+        } else {
+          alert('更新失败: ' + (data.error || '未知错误'));
+        }
+      } catch (err) {
+        alert('请求失败: ' + err.message);
+      }
+    }
+
+    async function deleteNote(id) {
+      if (confirm('确定删除？')) {
+        await updateStatus(id, 'rejected');
+      }
+    }
+  </script>
+</body>
+</html>
