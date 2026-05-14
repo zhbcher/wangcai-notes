@@ -30,7 +30,8 @@ export default defineConfig({
         { text: '记忆系统', link: '/guide/memory-system' }
       ],
       '/tutorials/': [
-        { text: 'HyperFrames 基础', link: '/tutorials/hyperframes-basics' }
+        { text: 'HyperFrames 基础', link: '/tutorials/hyperframes-basics' },
+        { text: 'DeepSeek 接入 Codex', link: '/tutorials/deepseek-codex-install-guide' }
       ],
       '/reference/': [
         { text: '配置速查', link: '/reference/config-cheatsheet' }
