@@ -2,14 +2,13 @@ import { defineConfig } from 'vitepress'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 
-// 自动扫描 tutorials 目录生成 sidebar
+// 自动扫描 docs/tutorials 目录生成 sidebar
 function getTutorialSidebar() {
-  const tutorialsDir = join(__dirname, 'tutorials')
+  const tutorialsDir = join(__dirname, '..', 'tutorials') // 从 .vitepress/ 回到 docs/
   const files = readdirSync(tutorialsDir)
     .filter(f => f.endsWith('.md') && !f.includes('README'))
     .map(f => {
       const name = f.replace('.md', '')
-      // 将文件名转为更友好的标题：deepseek-codex-install-guide → DeepSeek Codex Install Guide
       const title = name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
       return { text: title, link: `/tutorials/${name}` }
     })
@@ -49,7 +48,6 @@ export default defineConfig({
     footer: {
       copyright: '© 2026 旺财笔记'
     },
-    // 旺财风格：橙色主题
     logo: {
       src: '/logo.svg',
       width: 24,
