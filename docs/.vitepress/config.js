@@ -1,12 +1,20 @@
 import { defineConfig } from 'vitepress'
+import { readdirSync } from 'fs'
+import { join } from 'path'
 
-// 旺财主题配色
-const theme = {
-  color: {
-    primary: '#ff8c00', // 旺财橙
-    secondary: '#ffa500',
-    accent: '#ffcc00'
-  }
+// 自动扫描 tutorials 目录生成 sidebar
+function getTutorialSidebar() {
+  const tutorialsDir = join(__dirname, 'tutorials')
+  const files = readdirSync(tutorialsDir)
+    .filter(f => f.endsWith('.md') && !f.includes('README'))
+    .map(f => {
+      const name = f.replace('.md', '')
+      // 将文件名转为更友好的标题：deepseek-codex-install-guide → DeepSeek Codex Install Guide
+      const title = name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+      return { text: title, link: `/tutorials/${name}` }
+    })
+    .sort((a, b) => a.text.localeCompare(b.text))
+  return [{ text: '全部教程', items: files }]
 }
 
 export default defineConfig({
@@ -27,12 +35,10 @@ export default defineConfig({
     sidebar: {
       '/guide/': [
         { text: '快速开始', link: '/guide/quick-start' },
-        { text: '记忆系统', link: '/guide/memory-system' }
+        { text: '记忆系统', link: '/guide/memory-system' },
+        { text: '技能使用', link: '/guide/skills' }
       ],
-      '/tutorials/': [
-        { text: 'HyperFrames 基础', link: '/tutorials/hyperframes-basics' },
-        { text: 'DeepSeek 接入 Codex', link: '/tutorials/deepseek-codex-install-guide' }
-      ],
+      '/tutorials/': getTutorialSidebar(),
       '/reference/': [
         { text: '配置速查', link: '/reference/config-cheatsheet' }
       ]
