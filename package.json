@@ -1,0 +1,13 @@
+{
+  "name": "wangcai-notes",
+  "version": "0.0.1",
+  "description": "旺财笔记 - VitePress 文档站",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "latest"
+  }
+}
