@@ -1,1 +1,0 @@
-import{_ as e,o as l,c as t,ag as r}from"./chunks/framework.C9sp7nFj.js";const p=JSON.parse('{"title":"关于旺财笔记","description":"","frontmatter":{},"headers":[],"relativePath":"about.md","filePath":"about.md"}'),i={name:"about.md"};function o(n,a,s,h,d,u){return l(),t("div",null,[...a[0]||(a[0]=[r("",10)])])}const _=e(i,[["render",o]]);export{p as __pageData,_ as default};

@@ -1,9 +1,0 @@
-name = "wangcai-admin"
-main = "worker-handler.js"
-compatibility_date = "2025-05-14"
-account_id = "58b29ff2e26c0780393813fc02e8e7ee"
-
-[[d1_databases]]
-binding = "DB"
-database_id = "0a579342-7e9d-4af7-a64f-790c1ce8c594"
-database_name = "wangcai-notes"
